@@ -53,6 +53,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // allow unauthenticated access to /api/auth/**
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("api/collections/**").authenticated() // JWT required for /api/collections/***/
                         // any other request needs a valid JWT
                         .anyRequest().authenticated()
                 )

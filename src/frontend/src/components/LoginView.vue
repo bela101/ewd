@@ -7,9 +7,9 @@
       <button>Sign In</button>
     </form>
     <div>No account? <router-link to="/register">Register Here</router-link></div>
-
   </div>
 </template>
+
 
 <script>
 import { login } from '@/services/auth.service';

@@ -2,13 +2,13 @@ package com.example.ewd.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+//import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
-@NoArgsConstructor
+//@NoArgsConstructor
 @Table(name = "users")
 public class User {
     @Id
