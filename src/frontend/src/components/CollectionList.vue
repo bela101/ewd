@@ -1,31 +1,42 @@
-<script>
-import {getCollections} from "@/services/collection.service";
+<script setup>
+import {getCollections, getUserCollections} from "@/services/collection.service";
+import {onMounted, ref} from "vue";
+import CollectionCard from "@/components/cards/CollectionCard.vue";
 
-export default {
-  name: "CollectionList",
-  data() {
-    return {
-      collections: []
-    };
-  },
-  async mounted() {
-    this.collections = await getCollections();
-    console.log(this.collections);
-  }
-}
+
+const publicCollections = ref();
+const userCollections = ref();
+
+onMounted(async () => {
+  publicCollections.value = await getCollections();
+  userCollections.value = await getUserCollections();
+})
 
 </script>
 
 <template>
-  <div class="collections">
-    <h1> Collection List </h1>
-<!--    {{ collections }}-->
-    <div class="collection-card" v-for="collection in collections" :key="collection.id">
-      {{ collection.title }}
-      <p>Plants:</p>
-      <div v-for="plant in collection.plants" :key="plant.id">
-        {{plant}}
-      </div>
+  <h3 class="text-xl font-semibold mb-4">Öffentliche Kollektionen</h3>
+  <div class="flex overflow-x-auto">
+    <div class="mr-4" v-for="collection in publicCollections" :key="collection.id">
+      <CollectionCard
+          :collection-id="collection.id"
+          :title='collection.title'
+          :description="collection.description"
+          :is-public="collection.isPublic"
+          :plants="collection.plants"
+      />
+    </div>
+  </div>
+  <h3 class="text-xl font-semibold mb-4">Meine Kollektionen</h3>
+  <div class="flex overflow-x-auto">
+    <div class="mr-4" v-for="collection in userCollections" :key="collection.id">
+      <CollectionCard
+          :collection-id="collection.id"
+          :title='collection.title'
+          :description="collection.description"
+          :is-public="collection.isPublic"
+          :plants="collection.plants"
+      />
     </div>
   </div>
 </template>

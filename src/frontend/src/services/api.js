@@ -1,10 +1,15 @@
 import axios from "axios";
 import {logout} from "@/services/auth.service";
+import { useAuthStore } from "@/stores/auth";
 
-const api = axios.create({ baseURL: "http://localhost:8080/api" });
+// const api = axios.create({ baseURL: `${config.BASE_URL}api/` });
+const api = axios.create({ baseURL: '/api/' });
+
 
 api.interceptors.request.use(cfg => {
-    const token = localStorage.getItem('user-token');
+    const authStore = useAuthStore();
+    const token = authStore.token;
+    // const token = localStorage.getItem('user-token');
     if (token) {
         cfg.headers.Authorization = `Bearer ${token}`;
     }

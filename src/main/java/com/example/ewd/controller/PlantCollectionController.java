@@ -17,12 +17,27 @@ public class PlantCollectionController {
         this.service = service;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<PlantCollection>> all() {
         return ResponseEntity.ok(service.findAll());
     }
 
-    @PostMapping
+    @GetMapping
+    public ResponseEntity<List<PlantCollection>> publicCollections() {
+        return ResponseEntity.ok(service.findPublicCollections());
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<List<PlantCollection>> userCollections() {
+        return ResponseEntity.ok(service.findUserCollections());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PlantCollection> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findById(id));
+    }
+
+    @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<PlantCollection> create(@RequestBody PlantCollection c) {
         return ResponseEntity.ok(service.save(c));
     }

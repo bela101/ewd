@@ -1,16 +1,40 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import LoginView from '@/components/LoginView.vue';
-import RegisterView from '@/components/RegisterView.vue';
-import IndexView from "@/components/IndexView.vue";
-
-/* eslint-disable */
+import { useAuthStore } from "@/stores/auth";
+import LoginView from '@/views/LoginView.vue';
+import RegisterView from '@/views/RegisterView.vue';
+import IndexView from "@/views/IndexView.vue";
 
 
 
 const routes = [
-    { path: '/login', component: LoginView },
-    { path: '/register', component: RegisterView },
-    { path: '/', component: IndexView, meta: { requiresAuth: true} },
+    {
+        path: '/',
+        component: () => import('@/layouts/DefaultLayout.vue'),
+        meta: { requiresAuth: true},
+        children: [
+            { path: '', component: IndexView },
+            {
+                path: '/collections/:collectionId',
+                component: () => import('@/views/Collections/CollectionDetail.vue')
+            },
+            {
+                path: '/collections/new',
+                component: () => import('@/views/Collections/CollectionNew.vue'),
+            },
+            {
+                path: '/collections/:collectionId/edit',
+                component: () => import('@/views/Collections/CollectionEdit.vue'),
+            },
+        ]
+    },
+    {
+        path: '/',
+        component: () => import('@/layouts/AuthLayout.vue'),
+        children: [
+            { path: 'login', component: LoginView },
+            { path: '/register', component: RegisterView },
+        ]
+    },
 ];
 
 const router = createRouter({
@@ -20,7 +44,9 @@ const router = createRouter({
 
 
 router.beforeEach((to) => {
-    const token = localStorage.getItem('user-token');
+    const authStore = useAuthStore();
+
+    const token = authStore.token;
 
     if (to.meta.requiresAuth && !token) {
         // trying to access a protected route without a token → redirect to login

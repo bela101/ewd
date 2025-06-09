@@ -1,32 +1,38 @@
 import axios from 'axios';
+import  { useAuthStore } from "@/stores/auth";
 
-const API_URL = 'http://localhost:8080/api/auth/';
+// const API_URL = `${config.BASE_URL}api/auth/`;
+
+const API_URL = '/api/auth/'
 
 
 export function register(user) {
-    return axios.post(API_URL + 'register', user);
+    return axios.post(API_URL + 'register', null, {
+        headers: {
+            'Authorization': 'Basic ' + btoa(user.username + ':' + user.password)
+        }
+    });
 }
 
 export function login(user) {
-    return axios.post(API_URL + 'login', user)
-        .then(resp => {
-            localStorage.setItem('user-token', resp.data.token);
-            return resp;
-        });
+    return axios.post(API_URL + 'login', null, {
+        headers: {
+            'Authorization': 'Basic ' + btoa(user.username + ':' + user.password),
+        }
+    })
+    .then(resp => {
+        const authStore = useAuthStore();
+        authStore.setToken(resp.data.token);
+        return resp;
+    });
 }
 
 export function logout() {
-    localStorage.removeItem('user-token');
+    const authStore = useAuthStore();
+    authStore.clearToken();
 }
 
 export function getUsernameFromToken() {
-    const token = localStorage.getItem('user-token');
-    if ( !token ) return null;
-    try {
-    //     JWT format: header.payload.signature
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.sub;
-    } catch (err) {
-        return null;
-    }
+    const authStore = useAuthStore();
+    return authStore.username;
 }

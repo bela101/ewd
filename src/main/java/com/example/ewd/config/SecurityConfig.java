@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -33,6 +35,7 @@ public class SecurityConfig {
         this.userService = userService;
     }
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -46,12 +49,15 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .requiresChannel((channel -> channel
+                        .anyRequest().requiresSecure()))
 
                 // 4) URL authorization rules
                 .authorizeHttpRequests(auth -> auth
                         // allow all preflight (OPTIONS) requests through
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // allow unauthenticated access to /api/auth/**
+                        .requestMatchers("/images/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("api/collections/**").authenticated() // JWT required for /api/collections/***/
                         // any other request needs a valid JWT
@@ -68,7 +74,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         // permit Vue frontend origin
-        config.setAllowedOriginPatterns(List.of("http://localhost:3000"));
+        config.setAllowedOriginPatterns(List.of("http://localhost:3000", "https://localhost:3000"));
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -77,6 +83,11 @@ public class SecurityConfig {
         // apply to all endpoints
         source.registerCorsConfiguration("/**", config);
         return source;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     class JwtFilter extends GenericFilterBean {

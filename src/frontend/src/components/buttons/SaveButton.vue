@@ -1,0 +1,20 @@
+<template>
+  <button
+      class="flex items-center justify-center px-4 py-2 text-black text-lg font-medium bg-green-300 rounded-full hover:bg-green-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
+    <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+          d="M14.875 18.375V11.375H6.125V18.375M6.125 2.625V7H13.125M16.625 18.375H4.375C3.91087 18.375 3.46575 18.1906 3.13756 17.8624C2.80937 17.5342 2.625 17.0891 2.625 16.625V4.375C2.625 3.91087 2.80937 3.46575 3.13756 3.13756C3.46575 2.80937 3.91087 2.625 4.375 2.625H14L18.375 7V16.625C18.375 17.0891 18.1906 17.5342 17.8624 17.8624C17.5342 18.1906 17.0891 18.375 16.625 18.375Z"
+          stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+
+    <span class="">{{ text }}</span>
+  </button>
+</template>
+<script setup>
+import {defineProps} from 'vue'
+
+defineProps({
+  text: String,
+})
+
+</script>
